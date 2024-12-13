@@ -1,27 +1,23 @@
 import mysql.connector
 
-print("mysql.connector berhasil diimpor!")
-
+# Membuat koneksi ke database
 try:
-    # Membuat koneksi awal ke MySQL tanpa database
     conn = mysql.connector.connect(
         user="root",
         host="localhost",
-        password=""
+        password="", 
+        database="Penjualan"
     )
     cur = conn.cursor()
 
     # Membuat database jika belum ada
-    cur.execute("CREATE DATABASE IF NOT EXISTS perusahaan;")
-    print("Database 'perusahaan' siap atau sudah ada.")
+    cur.execute("CREATE DATABASE IF NOT EXISTS Penjualan;")
+    print("Database 'Penjualan' siap atau sudah ada.")
 
-    # Menghubungkan kembali ke database 'perusahaan'
-    conn.database = "perusahaan"
-
-    # Membuat tabel
+    # Membuat tabel jika belum ada
     cur.execute("""
     CREATE TABLE IF NOT EXISTS Pegawai (
-        NIK VARCHAR(20) NOT NULL PRIMARY KEY,
+        NIK CHAR(4) NOT NULL PRIMARY KEY,
         Nama VARCHAR(50),
         Alamat VARCHAR(255)
     )
@@ -48,6 +44,7 @@ try:
         FOREIGN KEY (Kode_Produk) REFERENCES Produk(Kode_Produk)
     )
     """)
+
     print("Tabel 'Transaksi' berhasil dibuat atau sudah ada.")
 
     cur.execute("""
@@ -65,10 +62,11 @@ try:
     # Menambahkan satu data awal ke tabel Produk
     cur.execute("""
     INSERT IGNORE INTO Produk (Kode_Produk, Nama_Produk, Jenis_Produk, Harga)
-    VALUES ('E01', 'Kopi', 'Minuman', 25000)
+    VALUES ('Z01', 'Kopi', 'Minuman', 35000)
     """)
     conn.commit()
     print("Data produk awal berhasil ditambahkan.")
+
 
     # Menu aplikasi
     def menu():
@@ -125,7 +123,7 @@ try:
                 print(f"Kode: {row[0]}, Nama: {row[1]}, Jenis: {row[2]}, Harga: {row[3]}")
 
     # Menjalankan menu
-    if __name__ == "__main__":
+    if _name_ == "_main_":
         menu()
 
 except mysql.connector.Error as err:
