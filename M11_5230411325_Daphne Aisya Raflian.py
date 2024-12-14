@@ -10,22 +10,24 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 class QualityAir:
-    def _init_(self, data):
+    def init(self, data):
         self.data = data
         
-
+        # Memeriksa dan menangani nilai NaN
         if self.data.isnull().values.any():
             print("Data mengandung nilai NaN. Menghapus baris dengan nilai NaN.")
-            self.data = self.data.dropna()
+            self.data = self.data.dropna()  # Menghapus baris dengan nilai NaN
         
         if 'Air Quality' not in self.data.columns:
             raise ValueError("Kolom 'Air Quality' tidak ditemukan dalam data.")
- 
+        
+        # Mengonversi nilai Air Quality yang berupa string ke angka
         label_encoder = LabelEncoder()
         self.data['Air Quality'] = label_encoder.fit_transform(self.data['Air Quality'])
-
+        
+        # Memeriksa hasil konversi
         print("Data setelah konversi 'Air Quality' ke angka:")
-        print(self.data['Air Quality'].unique()) 
+        print(self.data['Air Quality'].unique())  # Menampilkan nilai unik setelah konversi
         
         self.X = self.data.drop(['Air Quality'], axis=1)
         self.y = self.data['Air Quality']
@@ -37,12 +39,12 @@ class QualityAir:
 
     
     @staticmethod
-    def Membaca_xlsx(file_path):
+    def Membaca_xlsx(air_quality.xlsx):
         try:
-            data = pd.read_excel(file_path) 
+            data = pd.read_excel(air_quality.xlsx)  # Menggunakan parameter file_path yang diterima
             return data
         except FileNotFoundError:
-            print(f"File '{file_path}' tidak ditemukan. Pastikan path dan nama file sudah benar.")
+            print(f"File '{air_quality.xlsx}' tidak ditemukan. Pastikan path dan nama file sudah benar.")
             return None
     
     def train_model(self):
@@ -74,14 +76,16 @@ class QualityAir:
         plt.show()
 
 class Regresi:
-    def _init_(self, data):
+    def init(self, data):
         self.data = data
         if 'Air Quality' not in data.columns:
-            raise ValueError("Kolom 'Air Quality' tidak ditemukan dalam data.")
+            raise ValueError("Kolom 'Air Quality' tidak ditemukan.")
         
+        # Mengonversi Air Quality ke angka seperti yang dilakukan di kelas QualityAir
         label_encoder = LabelEncoder()
         self.data['Air Quality'] = label_encoder.fit_transform(self.data['Air Quality'])
         
+        # Menggunakan data kontinu untuk regresi
         self.X = data.drop(['Air Quality'], axis=1)
         self.y = data['Air Quality']
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size=0.2, random_state=42)
@@ -100,7 +104,7 @@ class Regresi:
         mse = mean_squared_error(self.y_test, y_pred)
         print("Mean Squared Error SVR:", mse)
 
-    def Regresi_KNN(self): 
+    def Regresi_KNN(self):  # Menambahkan metode regresi KNN
         model = KNeighborsRegressor(n_neighbors=5)
         model.fit(self.X_train, self.y_train)
         y_pred = model.predict(self.X_test)
@@ -108,10 +112,12 @@ class Regresi:
         print("Mean Squared Error KNN:", mse)
 
 
+
+# Menu interaksi pengguna
 while True:
     print("1. Membaca XLSX")
     print("2. Training Model")
-    print("3. Regresi")
+    print("3. Regresi ada 3 menu")
     print("4. Exit")
     pilihan = input("Pilih menu: ")
     
@@ -141,8 +147,8 @@ while True:
             regresi = Regresi(quality_air.data)
             print("Pilih metode regresi:")
             print("1. Regresi Linier")
-            print("2. Regresi Vektor Pendukung (SVR)")
-            print("3. Regresi K-Nearest Neighbors (KNN)")
+            print("2. (SVR)")
+            print("3.(KNN)")
             regresi_pilihan = input("Pilih metode: ")
             if regresi_pilihan == "1":
                 regresi.Regresi_Linier()
@@ -160,4 +166,4 @@ while True:
         break
     
     else:
-        print("Pilihan tidak valid. Silakan coba lagi.")
+        print("Pilihan tidak valid")
